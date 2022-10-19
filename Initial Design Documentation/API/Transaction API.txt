@@ -1,0 +1,58 @@
+GET Transactions
+	Request
+		user_id
+	Response
+		[{
+			user_id
+			id
+			name
+			created_at
+			updated_at
+			deleted
+			amount
+			category_name
+			account_name
+			transaction_date
+		}]
+
+GET Transaction
+	Request
+		user_id
+		id
+	Response
+		{
+			user_id
+			id
+			name
+			created_at
+			updated_at
+			deleted
+			amount
+			category_name
+			account_name
+			transaction_date
+		}
+
+POST Create Transaction
+	Request
+		user_id
+		name
+		amount
+		category_id
+		account_id
+		transaction_date
+
+PUT Update Transaction
+	Request
+		id
+		user_id
+		name
+		amount
+		category_id
+		account_id
+		transaction_date
+
+POST Delete Transaction
+	Request
+		user_id
+		id

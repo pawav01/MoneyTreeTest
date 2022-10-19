@@ -1,0 +1,42 @@
+GET Accounts
+	Request
+		user_id
+	Response
+		[{
+			user_id
+			id
+			name
+			created_at
+			updated_at
+			deleted
+		}]
+
+GET Account
+	Request
+		user_id
+		id
+	Response
+		{
+			user_id
+			id
+			name
+			created_at
+			updated_at
+			deleted
+		}
+
+POST Create Account
+	Request
+		user_id
+		name
+
+PUT Update Account
+	Request
+		id
+		user_id
+		name
+
+POST Delete Account
+	Request
+		user_id
+		id

@@ -1,0 +1,68 @@
+//// -- LEVEL 1
+//// -- Schemas, Tables and References
+
+// Creating tables
+// You can define the tables with full schema names
+Table users {
+  id int
+  username varchar(50)
+  first_name varchar(50)
+  last_name varchar(50)
+  created_at timestamp
+  updated_at timestamp
+  password varchar(50)
+}
+
+Table accounts {
+  id int
+  user_id int
+  name varchar(100)
+  created_at timestamp
+  updated_at timestamp
+  deleted boolean
+}
+
+Table categories {
+  id int
+  user_id int
+  name varchar(100)
+  created_at timestamp
+  updated_at timestamp
+  deleted boolean
+  type int
+  running_budget decimal
+}
+
+Table tasks {
+  id int
+  user_id int
+  name varchar(100)
+  scheduled_date timestamp
+  created_at timestamp
+  updated_at timestamp
+  deleted booelan
+}
+
+Table transactions {
+  id int
+  user_id int
+  category_id int
+  account_id int
+  amount decimal
+  name varchar(100)
+  transaction_date timestamp
+  created_at timestamp
+  updated_at timestamp
+  deleted boolean
+}
+// If schema name is omitted, it will default to "public" schema.
+
+// Creating references
+// You can also define relaionship separately
+// > many-to-one; < one-to-many; - one-to-one; <> many-to-many
+Ref: accounts.user_id > users.id  
+Ref: categories.user_id > users.id
+Ref: tasks.user_id > users.id
+Ref: transactions.user_id > users.id
+Ref: transactions.category_id > categories.id
+Ref: transactions.account_id > accounts.id

@@ -1,0 +1,46 @@
+GET Tasks
+	Request
+		user_id
+	Response
+		[{
+			user_id
+			id
+			name
+			created_at
+			updated_at
+			deleted
+			scheduled_date
+		}]
+
+GET Task
+	Request
+		user_id
+		id
+	Response
+		{
+			user_id
+			id
+			name
+			created_at
+			updated_at
+			deleted
+			scheduled_date
+		}
+
+POST Create Task
+	Request
+		user_id
+		name
+		scheduled_date
+		
+PUT Update Task
+	Request
+		id
+		user_id
+		name
+		scheduled_date
+
+POST Delete Task
+	Request
+		user_id
+		id

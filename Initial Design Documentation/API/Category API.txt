@@ -1,0 +1,50 @@
+GET Catagories
+	Request
+		user_id
+	Response
+		[{
+			user_id
+			id
+			name
+			created_at
+			updated_at
+			deleted
+			type
+			running_budget
+		}]
+
+GET Category
+	Request
+		user_id
+		id
+	Response
+		{
+			user_id
+			id
+			name
+			created_at
+			updated_at
+			deleted
+			type
+			running_budget
+		}
+
+POST Create Category
+	Request
+		user_id
+		name
+		type
+		running_budget
+
+PUT Update Category
+	Request
+		id
+		user_id
+		name
+		type
+		running_budget
+
+POST Delete Category
+	Request
+		user_id
+		id

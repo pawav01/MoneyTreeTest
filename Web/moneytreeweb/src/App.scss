@@ -1,6 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Infant:wght@500&display=swap");
+
+$bg-color: #f1fdf1;
+$text-color: #1f4f28;
+
 body {
-  background: #f1fdf1;
+  background: $bg-color;
   font-family: "Cormorant Infant", serif;
-  color: #1f4f28;
-}/*# sourceMappingURL=App.css.map */
+  color: $text-color;
+}

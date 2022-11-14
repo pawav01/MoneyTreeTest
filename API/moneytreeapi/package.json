@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "knex migrate:latest --knexfile database/knexfile.js && nodemon index.js",
-    "migrate": "knex migrate:latest --knexfile database/knexfile.js"
+    "migrate": "knex migrate:latest --knexfile database/knexfile.js",
+    "seed": "knex seed:run --knexfile database/knexfile.js"
   },
   "author": "",
   "license": "ISC",

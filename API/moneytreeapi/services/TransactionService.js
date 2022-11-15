@@ -10,10 +10,15 @@ const TransactionService = {
             throw Error('Error while getting all transactions for user');
         }   
     },
-    
-    getById: async (transactionId) => {
-        var transaction = await await Transaction.query().withGraphJoined('[categories, accounts]').where('Transactions.Id', transactionId);
-        return transaction;
+
+    getById: async (userId, transactionId) => {
+        try{
+            var transaction = await Transaction.query().withGraphJoined('[categories, accounts]').where('Transactions.UserId', userId).where('Transactions.Id', transactionId);
+            return transaction;
+        } catch(e) {
+            throw Error('Error while getting specific transaction for user');
+        }
+        
     }
 
 }

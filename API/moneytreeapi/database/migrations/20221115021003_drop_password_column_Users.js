@@ -3,9 +3,9 @@
  * @returns { Promise<void> }
  */
 export function up(knex) {
-  return knex.schema.alterTable('Categories', table => {
-    table.setNullable('Budget');
-  })
+    return knex.schema.alterTable('Users', table => {
+        table.dropColumn('Password');
+      })
 }
 
 /**
@@ -13,7 +13,5 @@ export function up(knex) {
  * @returns { Promise<void> }
  */
 export function down(knex) {
-    return knex.schema.alterTable('Categories', table => {
-        table.dropNullable('Budget');
-      })
+  
 }

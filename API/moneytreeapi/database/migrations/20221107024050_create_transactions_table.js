@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
- exports.up = function(knex) {
+ export function up(knex) {
     return knex.schema.createTable('Transactions', table => {
       table.increments('Id').primary();
       table.integer('UserId').notNullable().references('Id').inTable('Users');
@@ -16,13 +16,13 @@
       table.boolean('IsDeleted').notNullable();
   
     })
-  };
+  }
   
   /**
    * @param { import("knex").Knex } knex
    * @returns { Promise<void> }
    */
-  exports.down = function(knex) {
+  export function down(knex) {
       return knex.schema.dropTable('Transactions');
-  };
+  }
   

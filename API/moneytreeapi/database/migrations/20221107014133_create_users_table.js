@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function(knex) {
+export function up(knex) {
   return knex.schema.createTable('Users', table => {
     table.increments('Id').primary();
     table.string('UserName', 50).notNullable();
@@ -12,12 +12,12 @@ exports.up = function(knex) {
     table.timestamp('CreatedAt').notNullable();
     table.timestamp('UpdatedAt').notNullable();
   })
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function(knex) {
+export function down(knex) {
   return knex.schema.dropTable('Users');
-};
+}

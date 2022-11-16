@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> } 
  */
-exports.seed = async function (knex) {
+export async function seed (knex) {
   // Deletes ALL existing entries
   await knex('Transactions').del()
   await knex('Transactions').insert([
@@ -13,4 +13,4 @@ exports.seed = async function (knex) {
     { Id: 5, UserId: 3, Name: 'CCC August Salary', CreatedAt: '2022-11-07T18:40:20+00:00', UpdatedAt: '2022-11-07T18:40:20+00:00', IsDeleted: false, TransactionDate: '2022-11-07T18:40:20+00:00', AccountId: 6, CategoryId: 5, Amount: 11000.00 },
     { Id: 6, UserId: 3, Name: 'CCC September Salary', CreatedAt: '2022-11-07T18:40:20+00:00', UpdatedAt: '2022-11-07T18:40:20+00:00', IsDeleted: false, TransactionDate: '2022-11-07T18:40:20+00:00', AccountId: 5, CategoryId: 6, Amount: 1300.00 },
   ]);
-};
+}

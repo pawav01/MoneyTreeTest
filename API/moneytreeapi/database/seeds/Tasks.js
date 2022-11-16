@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> } 
  */
-exports.seed = async function(knex) {
+export async function seed(knex) {
   // Deletes ALL existing entries
   await knex('Tasks').del()
   await knex('Tasks').insert([
@@ -13,4 +13,4 @@ exports.seed = async function(knex) {
     {Id: 5, UserId: 3, Name: 'CCC Task 1', CreatedAt:'2022-11-07T18:40:20+00:00', UpdatedAt: '2022-11-07T18:40:20+00:00', IsDeleted: false, ScheduledAt:'2022-11-07T18:40:20+00:00' },
     {Id: 6, UserId: 3, Name: 'CCC Task 2', CreatedAt:'2022-11-07T18:40:20+00:00', UpdatedAt: '2022-11-07T18:40:20+00:00', IsDeleted: false, ScheduledAt:'2022-11-07T18:40:20+00:00' },
   ]);
-};
+}

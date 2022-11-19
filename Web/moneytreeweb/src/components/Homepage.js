@@ -1,7 +1,7 @@
 import React from "react";
 import NavigationBar from "./NavigationBar";
 import { Container } from "react-bootstrap";
-import "../Styles.scss";
+import "../styles/Styles.scss";
 
 const Homepage = () => {
   return (

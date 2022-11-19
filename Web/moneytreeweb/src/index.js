@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import "./Styles.scss";
+import "./styles/index.css";
+import "./styles/Styles.scss";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Put any other imports below so that CSS from your

@@ -20,7 +20,7 @@ const NavigationBar = () => {
             <Nav className="justify-content-end flex-grow-1 pe-3">
               <Link to="/">Home</Link>
 
-              <Link to="/about">About Us</Link>
+              <Link to="/dashboard">Dashboard</Link>
 
               <Link to="/login">Login</Link>
             </Nav>

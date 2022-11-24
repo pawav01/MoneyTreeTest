@@ -4,6 +4,7 @@ import NavigationBar from "./NavigationBar";
 import { Row, ListGroup } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import { Bar, Doughnut } from "react-chartjs-2";
+// eslint-disable-next-line
 import { Chart as ChartJS } from "chart.js/auto";
 
 const Dashboard = () => {
@@ -66,8 +67,8 @@ const Dashboard = () => {
           style={{
             marginTop: "10rem",
             marginLeft: "4rem",
-            width: "15rem",
-            height: "20rem",
+            width: "15%",
+            height: "20%",
             alignItems: "center",
             fontSize: "150%",
           }}
@@ -84,8 +85,8 @@ const Dashboard = () => {
           style={{
             marginTop: "10rem",
             marginLeft: "2rem",
-            width: "33rem",
-            height: "20rem",
+            width: "35%",
+            height: "30%",
             alignItems: "left",
             fontSize: "120%",
           }}
@@ -125,8 +126,8 @@ const Dashboard = () => {
             marginTop: "10rem",
             marginLeft: "2rem",
             marginRight: "2rem",
-            width: "32rem",
-            height: "20rem",
+            width: "37%",
+            height: "20%",
             alignItems: "left",
             fontSize: "120%",
           }}
@@ -142,8 +143,8 @@ const Dashboard = () => {
           style={{
             marginTop: "2rem",
             marginLeft: "4rem",
-            width: "50rem",
-            height: "37rem",
+            width: "55%",
+            height: "20%",
             alignItems: "left",
             fontSize: "50%",
           }}
@@ -158,7 +159,7 @@ const Dashboard = () => {
             marginTop: "2rem",
             marginLeft: "2rem",
             marginRight: "2rem",
-            width: "32rem",
+            width: "35%",
             height: "37rem",
             alignItems: "left",
             fontSize: "50%",

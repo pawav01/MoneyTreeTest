@@ -9,7 +9,7 @@ const NavigationBar = () => {
   return (
     <div>
       <Container>
-        <Navbar expand="lg" fixed="top">
+        <Navbar style={{ backgroundColor: "#D3F5D3" }} expand="lg" fixed="top">
           <img src={moneytree} width="100" height="100" alt="Money Tree logo" />
 
           <Navbar.Brand style={{ fontSize: "250%", paddingLeft: "2%" }}>

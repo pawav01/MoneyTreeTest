@@ -17,6 +17,30 @@ const CategoryController = {
         } catch(e) {
             return res.status(400).json({status: 400, mesage: e.message});
         }
+    },
+    createNewCategory: async(req, res, next) => {
+        try{
+            var response = await CategoryService.createNewCategory(req.params.userId, req.body);
+            return res.status(200).json(response);
+        } catch(e) {
+            return res.status(400).json({status: 400, message: e.message});
+        }
+    },
+    updateCategory: async(req, res, next) => {
+        try{
+            var response = await CategoryService.updateCategory(req.params.categoryId, req.body);
+            return res.status(200).json(response);
+        } catch(e){
+            return res.status(400).json({status: 400, message: e.message});
+        }
+    },
+    deleteCategory: async(req, res, next) => {
+        try{
+            var response = await CategoryService.deleteCategory(req.params.categoryId);
+            return res.status(200).json(response);
+        } catch (e){
+            return res.status(400).json({status: 400, message: e.message});
+        }
     }
 }
 

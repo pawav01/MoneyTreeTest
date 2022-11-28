@@ -3,6 +3,7 @@ import Account from './Account.js';
 import Category from './Category.js';
 import Transaction from './Transaction.js';
 import Task from './Task.js';
+import Password from './Password.js';
 
 class User extends Model {
     
@@ -47,6 +48,14 @@ class User extends Model {
                 join: {
                     from: 'Users.Id',
                     to: 'Tasks.UserId'
+                }
+            },
+            passwords: {
+                relation: Model.HasManyRelation,
+                modelClass: Password,
+                join: {
+                    from: 'Users.Id',
+                    to: 'Passwords.UserId'
                 }
             }
         }

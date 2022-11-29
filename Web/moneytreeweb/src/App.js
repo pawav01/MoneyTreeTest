@@ -7,8 +7,10 @@ import "./styles/App.scss";
 import { useState } from "react";
 import { UserContext } from "./contexts/UserContext";
 import React from "react";
+
 function App() {
   const [user, setUser] = useState(null);
+  
   return (
     <Routes>
       <Route path="/" element={<Homepage />} />

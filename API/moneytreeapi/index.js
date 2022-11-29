@@ -5,10 +5,13 @@ import { TransactionRoute }from './routes/TransactionRoute.js';
 import { AccountRoute } from './routes/AccountRoute.js';
 import { CategoryRoute } from './routes/CategoryRoute.js';
 import { TaskRoute } from './routes/TaskRoute.js';
+import cors from "cors";
 
 const app = express();
-const port = 3000;
+const port = 4000;
+
 app.use(express.json());
+app.use(cors({ origin: '*' }));
 
 dbSetup();
 

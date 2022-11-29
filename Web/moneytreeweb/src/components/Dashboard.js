@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useEffect, useContext, useState } from "react";
 import Card from "react-bootstrap/Card";
 import NavigationBar from "./NavigationBar";
 import { Row, ListGroup } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import { Bar, Doughnut } from "react-chartjs-2";
+import { getUserData } from "../api/UserApi";
 // eslint-disable-next-line
 import { Chart as ChartJS } from "chart.js/auto";
+import { UserContext } from "../contexts/UserContext";
 
 const Dashboard = () => {
+  const { user, setUser } = useContext(UserContext)
+  useEffect(() => {
+    const getData = async () => {
+      const user = await getUserData();
+      setUser(user);
+      console.log(user);
+    }
+    getData();
+  }, []);
+
   const doughnutData = {
     labels: ["Food", "Travel", "Household", "Shopping", "Healthcare", "Misc"],
     datasets: [
@@ -59,6 +71,11 @@ const Dashboard = () => {
       },
     ],
   };
+
+  if (user == null) {
+    return <div>Loading...</div>;
+  }
+  
   return (
     <div>
       <NavigationBar />
@@ -193,6 +210,7 @@ const Dashboard = () => {
       </Row>
     </div>
   );
+  
 };
 
 export default Dashboard;

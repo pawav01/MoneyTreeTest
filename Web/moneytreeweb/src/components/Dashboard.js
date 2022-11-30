@@ -1,216 +1,269 @@
 import React, { useEffect, useContext, useState } from "react";
 import Card from "react-bootstrap/Card";
 import NavigationBar from "./NavigationBar";
-import { Row, ListGroup } from "react-bootstrap";
-import Table from "react-bootstrap/Table";
-import { Bar, Doughnut } from "react-chartjs-2";
+import { Row, ListGroup, Dropdown, Col } from "react-bootstrap";
+// import Table from "react-bootstrap/Table";
+import { Bar } from "react-chartjs-2";
 import { getUserData } from "../api/UserApi";
 // eslint-disable-next-line
 import { Chart as ChartJS } from "chart.js/auto";
 import { UserContext } from "../contexts/UserContext";
 
 const Dashboard = () => {
-  const { user, setUser } = useContext(UserContext)
+  const { user, setUser } = useContext(UserContext);
+  const [toggleYear, setToggleYear] = useState(2022);
+  const [toggleMonth, setToggleMonth] = useState(10);
+
   useEffect(() => {
     const getData = async () => {
       const user = await getUserData();
       setUser(user);
       console.log(user);
-    }
+    };
     getData();
+    // eslint-disable-next-line
   }, []);
 
-  const doughnutData = {
-    labels: ["Food", "Travel", "Household", "Shopping", "Healthcare", "Misc"],
-    datasets: [
-      {
-        label: "Expenses",
-        data: [12, 19, 3, 5, 7, 4],
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.2)",
-          "rgba(54, 162, 235, 0.2)",
-          "rgba(255, 206, 86, 0.2)",
-          "rgba(75, 192, 192, 0.2)",
-          "rgba(75, 192, 192, 0.2)",
-          "rgba(75, 192, 192, 0.2)",
-        ],
-        borderColor: [
-          "rgba(255, 99, 132, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(54, 162, 235, 0.2)",
-          "rgba(75, 192, 192, 1)",
-        ],
-        borderWidth: 1,
-        cutout: "90%",
-        circumference: 180,
-        rotation: 270,
-      },
-    ],
+  // console.log(user);
+
+  let expenseData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  let incomeData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  let years = [];
+
+  if (user) {
+    for (let i = 0; i < user.categories.length; i++) {
+      let getTimeStamp = user.categories[i].CreatedAt;
+      let date = new Date(getTimeStamp);
+      let month = date.getMonth();
+      let year = date.getFullYear();
+
+      if (!years.includes(year)) {
+        years.push(year);
+      }
+      // console.log(years);
+
+      if (user.categories[i].Type === 2) {
+        expenseData[month] = user.categories[i].Budget;
+      }
+      if (user.categories[i].Type === 1) {
+        incomeData[month] = user.categories[i].Budget;
+      }
+    }
+  }
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  // const monthnumbers = months.map((month) => {
+  //   return months.indexOf(month);
+  // });
+  // console.log(monthnumbers);
+
+  function setYearValue(y) {
+    setToggleYear(y);
+  }
+  // console.log(toggleYear);
+
+  function setMonthValue(m) {
+    setToggleMonth(m);
+  }
+
+  //console.log(toggleMonth);
+
+  function getIncome() {
+    for (let i = 0; i < user.categories.length; i++) {
+      let getTimeStamp = user.categories[i].CreatedAt;
+      let date = new Date(getTimeStamp);
+      let month = date.getMonth();
+      // console.log(month);
+      let year = date.getFullYear();
+      if (
+        user.categories[i].Type === 1 &&
+        // eslint-disable-next-line
+        year == toggleYear &&
+        // eslint-disable-next-line
+        month == toggleMonth
+      ) {
+        return user.categories[i].Budget;
+      } else return 0;
+    }
+  }
+  function getExpenses() {
+    let total = 0;
+    for (let i = 0; i < user.categories.length; i++) {
+      let getTimeStamp = user.categories[i].CreatedAt;
+      let date = new Date(getTimeStamp);
+      let month = date.getMonth();
+      let year = date.getFullYear();
+      if (
+        user.categories[i].Type === 2 &&
+        // eslint-disable-next-line
+        year == toggleYear &&
+        // eslint-disable-next-line
+        month == toggleMonth
+      ) {
+        return total + user.categories[i].Budget;
+      } else return 0;
+    }
+  }
+
+  const expense = {
+    label: "Expenses",
+    data: expenseData,
+    backgroundColor: "rgba(255, 99, 132, 0.4)",
+    borderColor: "rgba(255, 99, 132, 1)",
+    borderWidth: 1,
+  };
+
+  const income = {
+    label: "Income",
+    data: incomeData,
+    backgroundColor: "rgba(75, 192, 192, 0.4)",
+    borderColor: "rgba(75, 192, 192, 1)",
+    borderWidth: 1,
   };
 
   const barData = {
-    labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-    datasets: [
-      {
-        data: [12, 19, 3, 5, 2, 3, 10, 12, 19, 3, 5, 2],
-      },
-    ],
+    labels: months,
+    datasets: [expense, income],
   };
 
   if (user == null) {
     return <div>Loading...</div>;
   }
-  
+
   return (
     <div>
       <NavigationBar />
-      <Row>
-        <Card
-          style={{
-            marginTop: "10rem",
-            marginLeft: "4rem",
-            width: "15%",
-            height: "20%",
-            alignItems: "center",
-            fontSize: "150%",
-          }}
-        >
-          <Card.Body>
-            <Card.Title>Month - November 2022</Card.Title>
-            <Card.Text className="mb-2">Income</Card.Text>
-            <Card.Text className="mb-2 text-success">$80000</Card.Text>
-            <Card.Text className="mb-2">Expense</Card.Text>
-            <Card.Text className="mb-2 text-danger">$3100</Card.Text>
-          </Card.Body>
-        </Card>
-        <Card
-          style={{
-            marginTop: "10rem",
-            marginLeft: "2rem",
-            width: "35%",
-            height: "30%",
-            alignItems: "left",
-            fontSize: "120%",
-          }}
-        >
-          <Card.Body>
-            <Card.Title>Categories</Card.Title>
-            <Table
-              responsive
-              striped
-              style={{ fontSize: "90%", marginTop: "1em" }}
-            >
-              <thead style={{ alignItems: "center" }}>
-                <tr>
-                  <th>Food</th>
-                  <th>Travel</th>
-                  <th>Household</th>
-                  <th>Shopping</th>
-                  <th>Healthcare</th>
-                  <th>Misc</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>$300</td>
-                  <td>$200</td>
-                  <td>$100</td>
-                  <td>$100</td>
-                  <td>$100</td>
-                  <td>$100</td>
-                </tr>
-              </tbody>
-            </Table>
-          </Card.Body>
-        </Card>
-        <Card
-          style={{
-            marginTop: "10rem",
-            marginLeft: "2rem",
-            marginRight: "2rem",
-            width: "37%",
-            height: "20%",
-            alignItems: "left",
-            fontSize: "120%",
-          }}
-        >
-          <Card.Body>
-            <Card.Title>Categories</Card.Title>
-            <Doughnut data={doughnutData} options={{ aspectRatio: 2 }} />
-          </Card.Body>
-        </Card>
+      <Row
+        style={{
+          marginTop: "10%",
+          marginLeft: "5%",
+        }}
+      >
+        <Col>
+          <h1>Welcome {user.UserName ? user.UserName : "Guest"}!</h1>{" "}
+        </Col>
+        <Col></Col>
+        <Col>
+          <Row>
+            <Dropdown onSelect={setYearValue}>
+              <Dropdown.Toggle className="dropdown" id="dropdown-basic">
+                Choose Year
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {years.map((year) => (
+                  <Dropdown.Item eventKey={year}>{year}</Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+            <h3 style={{ marginLeft: "5%" }}> {toggleYear} </h3>
+            <Dropdown style={{ marginLeft: "5%" }} onSelect={setMonthValue}>
+              <Dropdown.Toggle className="dropdown">
+                Choose Month
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {months.map((month) => (
+                  <Dropdown.Item eventKey={months.indexOf(month)}>
+                    {month}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+            <h3 style={{ marginLeft: "5%" }}> {toggleMonth} </h3>
+          </Row>
+        </Col>
       </Row>
       <Row>
-        <Card
+        <Col className="toprow">
+          <Card style={{ alignItems: "center" }}>
+            <Card.Body>
+              <Card.Title
+                className="mb-2 text-success"
+                style={{ fontSize: "80%" }}
+              >
+                Income
+              </Card.Title>
+              <Card.Text className="mb-2 text-success">
+                ${getIncome()}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col
+          className="toprow"
           style={{
-            marginTop: "2rem",
-            marginLeft: "4rem",
-            width: "55%",
-            height: "20%",
-            alignItems: "left",
-            fontSize: "50%",
+            marginRight: "5%",
           }}
         >
-          <Card.Body>
-            <Card.Title>Year - 2022</Card.Title>
-            <Bar data={barData} height={400} width={600} />
-          </Card.Body>
-        </Card>
-        <Card
+          <Card style={{ alignItems: "center" }}>
+            <Card.Body>
+              <Card.Title
+                className="mb-2 text-danger"
+                style={{ fontSize: "80%" }}
+              >
+                Expense
+              </Card.Title>
+              <Card.Text className="mb-2 text-danger">
+                ${getExpenses()}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col className="bottomrow">
+          <Card>
+            <Card.Body>
+              <Card.Title>Year {toggleYear}</Card.Title>
+              <Bar data={barData} height={400} width={600} />
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col
+          className="bottomrow"
           style={{
-            marginTop: "2rem",
-            marginLeft: "2rem",
-            marginRight: "2rem",
-            width: "35%",
-            height: "37rem",
-            alignItems: "left",
-            fontSize: "50%",
+            marginRight: "5%",
           }}
         >
-          <Card.Title
-            style={{
-              marginTop: "2rem",
-              marginLeft: "2rem",
-            }}
-          >
-            Recent Activity
-          </Card.Title>
-          <Card.Body style={{ overflowY: "scroll" }}>
-            <ListGroup variant="flush" style={{ fontSize: "250%" }}>
-              <ListGroup.Item variant="success">Income $500</ListGroup.Item>
-              <ListGroup.Item variant="danger">Travel $20</ListGroup.Item>
-              <ListGroup.Item variant="success">Income $500</ListGroup.Item>
-              <ListGroup.Item variant="danger">Travel $20</ListGroup.Item>
-              <ListGroup.Item variant="success">Income $500</ListGroup.Item>
-              <ListGroup.Item variant="danger">Travel $20</ListGroup.Item>
-              <ListGroup.Item variant="success">Income $500</ListGroup.Item>
-              <ListGroup.Item variant="danger">Travel $20</ListGroup.Item>
-              <ListGroup.Item variant="success">Income $500</ListGroup.Item>
-              <ListGroup.Item variant="danger">Travel $20</ListGroup.Item>
-              <ListGroup.Item variant="success">Income $500</ListGroup.Item>
-              <ListGroup.Item variant="danger">Travel $20</ListGroup.Item>
-            </ListGroup>
-          </Card.Body>
-        </Card>
+          <Card>
+            <Card.Title
+              style={{
+                marginTop: "5%",
+                marginLeft: "5%",
+                fontSize: "450%",
+              }}
+            >
+              Recent Activity
+            </Card.Title>
+            <Card.Body style={{ overflowY: "scroll" }}>
+              <ListGroup variant="flush" style={{ fontSize: "250%" }}>
+                {user.transactions.map((transaction) => (
+                  <ListGroup.Item variant="success">
+                    <Col> {transaction.Name} </Col>
+                    <Col> ${transaction.Amount}</Col>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </Card.Body>
+          </Card>
+        </Col>
       </Row>
     </div>
   );
-  
 };
 
 export default Dashboard;

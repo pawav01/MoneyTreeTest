@@ -10,16 +10,19 @@ import React from "react";
 
 function App() {
   const [user, setUser] = useState(null);
-  
+
   return (
     <Routes>
       <Route path="/" element={<Homepage />} />
       <Route path="login" element={<Login />} />
-      <Route path="dashboard" element={
-          <UserContext.Provider value={{user, setUser}}>
-        <Dashboard />
-        </UserContext.Provider>
-      } />
+      <Route
+        path="dashboard"
+        element={
+          <UserContext.Provider value={{ user, setUser }}>
+            <Dashboard />
+          </UserContext.Provider>
+        }
+      />
     </Routes>
   );
 }

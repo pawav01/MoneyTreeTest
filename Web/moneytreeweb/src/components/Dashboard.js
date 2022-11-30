@@ -146,7 +146,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <NavigationBar />
+
       <Row
         style={{
           marginTop: "10%",

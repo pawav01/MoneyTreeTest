@@ -19,9 +19,8 @@ const NavigationBar = () => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="justify-content-end flex-grow-1 pe-3">
               <Link to="/">Home</Link>
-
               <Link to="/dashboard">Dashboard</Link>
-
+              <Link to="/account">Accounts</Link>
               <Link to="/login">Login</Link>
             </Nav>
           </Navbar.Collapse>

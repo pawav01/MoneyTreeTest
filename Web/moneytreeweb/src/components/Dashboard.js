@@ -1,6 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
 import Card from "react-bootstrap/Card";
-import NavigationBar from "./NavigationBar";
 import { Row, ListGroup, Dropdown, Col } from "react-bootstrap";
 // import Table from "react-bootstrap/Table";
 import { Bar } from "react-chartjs-2";
@@ -146,7 +145,6 @@ const Dashboard = () => {
 
   return (
     <div>
-
       <Row
         style={{
           marginTop: "10%",
@@ -182,7 +180,7 @@ const Dashboard = () => {
                 ))}
               </Dropdown.Menu>
             </Dropdown>
-            <h3 style={{ marginLeft: "5%" }}> {toggleMonth} </h3>
+            <h3 style={{ marginLeft: "5%" }}> {Number(toggleMonth) + 1} </h3>
           </Row>
         </Col>
       </Row>

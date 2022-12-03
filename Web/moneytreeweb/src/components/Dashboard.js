@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState } from "react";
 import Card from "react-bootstrap/Card";
-import { Row, ListGroup, Dropdown, Col } from "react-bootstrap";
+import { Row, ListGroup, Dropdown, Col, Spinner } from "react-bootstrap";
 // import Table from "react-bootstrap/Table";
 import { Bar } from "react-chartjs-2";
 import { getUserData } from "../api/UserApi";
@@ -17,7 +17,6 @@ const Dashboard = () => {
     const getData = async () => {
       const user = await getUserData();
       setUser(user);
-      console.log(user);
     };
     getData();
     // eslint-disable-next-line
@@ -140,7 +139,12 @@ const Dashboard = () => {
   };
 
   if (user == null) {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" role="status" style={{
+      marginTop: "10%",
+      marginLeft: "5%",
+    }}>
+      <span className="visually-hidden">Loading...</span>
+    </Spinner>;
   }
 
   return (

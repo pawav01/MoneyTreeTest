@@ -6,7 +6,8 @@ const UserService = {
 
     getUserById: async (userId) => {
         try {
-            const response = await User.query().withGraphJoined('[accounts, categories, transactions, tasks]').where('Users.Id', userId);
+            const response = await User.query().withGraphJoined('[accounts, categories, transactions, tasks]').where('Users.Id', userId)
+            .where('Accounts.IsDeleted', false).where('Categories.IsDeleted', false).where('Transactions.IsDeleted', false).where('Tasks.IsDeleted', false);
             return response;
         } catch (e) {
             throw Error('Error while getting user');

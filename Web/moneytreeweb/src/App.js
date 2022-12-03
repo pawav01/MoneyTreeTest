@@ -8,6 +8,7 @@ import Account from "./components/Account";
 import Footer from "./components/Footer";
 import NavigationBar from "./components/NavigationBar";
 import "./styles/App.scss";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import { useState } from "react";
 import { UserContext } from "./contexts/UserContext";
 import React from "react";

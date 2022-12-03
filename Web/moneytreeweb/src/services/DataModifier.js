@@ -20,10 +20,13 @@ export const DataSimplifier = (userId, accounts, categories, transactions) => {
     }).filter(item => !!item)
 }
 
-export const GroupByAccount = (simplifiedData) => {
-    return simplifiedData.reduce((result, item) => {
-        result[item.accountId] = result[item.accountId] || [];
-        result[item.accountId].push(item);
+export const GroupByAccount = (accounts, simplifiedData) => {
+    return accounts.reduce((result, item) => {
+        result[item.Name] = result[item.Name] || [];
+        simplifiedData.map(entry => {
+            if(entry.accountName === item.Name)
+                result[item.Name].push(entry);
+        })
         return result;
     }, Object.create(null))
 }
@@ -36,15 +39,15 @@ export const GroupByCategory = (simplifiedData) => {
     }, Object.create(null))
 }
 
-export const AccountSummaryTable = (accountData) => {
+export const AccountSummaryTable = (accounts, accountData) => {
     var currentDate = new Date();
     var msDay = 60*60*24*1000;
-    return Object.keys(accountData).map(element => {
-        var accountId = accountData[element][0].accountId;
-        var accountName = accountData[element][0].accountName;
+    var result = Object.keys(accountData).map(element => {
+        var accountId = element == undefined ? accountData[element][0].accountId : accounts.find(entry => entry.Name === element).Id;
+        var accountName = element == undefined ? accountData[element][0].accountName : accounts.find(entry => entry.Name === element).Name;
         var income30, income60, income90, expense30, expense60, expense90;
         income30 = income60 = income90 = expense30 = expense60 = expense90 = 0;
-        return accountData[element].map(item => {
+        (element != undefined ? accountData[element] : []).map(item => {
                 var dateDiff = (currentDate - new Date(item.transactionDate))/msDay;
                 switch(item.categoryType){
                     case 1:
@@ -58,18 +61,18 @@ export const AccountSummaryTable = (accountData) => {
                         income90 = dateDiff <= 90 ? income90+=item.transactionAmount : income90;
                         break;
                 }
-            return {
-                accountId: accountId,
-                accountName: accountName,
-                income30: income30,
-                income60: income60,
-                income90: income90,
-                expense30: expense30,
-                expense60: expense60,
-                expense90: expense90,
-            }
         })
+        return {
+            accountId: accountId,
+            accountName: accountName,
+            income30: income30,
+            income60: income60,
+            income90: income90,
+            expense30: expense30,
+            expense60: expense60,
+            expense90: expense90,
+        }
 
     }); 
-    
+    return result;
 }

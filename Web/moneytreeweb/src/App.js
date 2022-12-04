@@ -7,6 +7,7 @@ import Categories from "./components/Categories";
 import Account from "./components/Account";
 import Footer from "./components/Footer";
 import NavigationBar from "./components/NavigationBar";
+import Transaction from "./components/Transaction";
 import "./styles/App.scss";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useState } from "react";
@@ -43,6 +44,14 @@ function App() {
           element={
             <UserContext.Provider value={{ user, setUser }}>
               <Categories />
+            </UserContext.Provider>
+          }
+        />
+        <Route
+          path="transaction"
+          element={
+            <UserContext.Provider value={{ user, setUser }}>
+              <Transaction />
             </UserContext.Provider>
           }
         />

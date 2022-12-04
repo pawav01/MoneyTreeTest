@@ -31,11 +31,11 @@ const TransactionService = {
                 CategoryId: data.categoryId,
                 AccountId: data.accountId,
                 Amount: data.amount,
-                TransactionDate: data.transationDate
+                TransactionDate: data.transactionDate
             });
             return response;
         } catch(e){
-            throw Error('Error while creating new transaction for user')
+            throw Error(e)
         }
     },
     updateTransaction: async(transactionId, data) => {

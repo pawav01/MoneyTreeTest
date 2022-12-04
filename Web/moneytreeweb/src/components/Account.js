@@ -4,7 +4,7 @@ import { UserContext } from "../contexts/UserContext";
 import Table from 'react-bootstrap/Table';
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
-import { Row, ListGroup, Dropdown, DropdownButton, Col, Button, Modal, Form, Spinner } from "react-bootstrap";
+import { Row, Dropdown, Col, Button, Modal, Form, Spinner } from "react-bootstrap";
 import { getUserData, createAccount, deleteAccount } from "../api/UserApi";
 
 const Account = () => {
@@ -102,7 +102,7 @@ const Account = () => {
                         </Modal.Header>
                         <Modal.Body>
                             <Form onChange={onFormDataChange}>
-                                <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Group className="mb-3" controlId="formAccountName">
                                     <Form.Label>Account Name</Form.Label>
                                     <Form.Control type="text" placeholder="Enter account name" />
                                 </Form.Group>
@@ -205,6 +205,7 @@ const Account = () => {
                         </Modal.Header>
                         <Modal.Body>
                             Are you sure you want to delete the account : {deleteId.name} ?
+                            All transactions related to the account will be deleted as well.
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant="secondary" onClick={deleteClose}>

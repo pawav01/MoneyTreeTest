@@ -1,120 +1,138 @@
 import React, { useEffect, useContext, useState } from "react";
 import Card from "react-bootstrap/Card";
-import { Row, Dropdown, Col, Form, Button } from "react-bootstrap";
+import { Row, Dropdown, Col, Form, Button, Spinner, Modal } from "react-bootstrap";
 
 import Table from "react-bootstrap/Table";
 import { Doughnut } from "react-chartjs-2";
-import { getUserData } from "../api/UserApi";
-// eslint-disable-next-line
-import { Chart as ChartJS } from "chart.js/auto";
+import { createCategory, deleteCategory, getUserData } from "../api/UserApi";
 import { UserContext } from "../contexts/UserContext";
+import { DataSimplifier, GroupByCategory } from "../services/DataModifier";
 
 const Categories = () => {
   const { user, setUser } = useContext(UserContext);
-  const [toggleYear, setToggleYear] = useState(2022);
-  const [toggleMonth, setToggleMonth] = useState(10);
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const [toggleYear, setToggleYear] = useState(null);
+  const [toggleMonth, setToggleMonth] = useState(null);
+  const [toggleCategory, setToggleCategory] = useState(null);
+  const [categoryList, setCategoryList] = useState(null);
+  const [formCategoryName, setFormCategoryName] = useState(null);
+  const [formCategoryType, setFormCategoryType] = useState(null);
+  const [formCategoryBudget, setFormCategoryBudget] = useState(null);
+  const [simplifiedData, setSimplifiedData] = useState(null);
+  const [groupByCategory, setGroupByCategory] = useState(null);
+  const [transactionDisplay, setTransactionDisplay] = useState(null);
+  const [addCategory, setAddCategory] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [yearList, setYearList] = useState(null);
+  
+  const [doughnutData, setDoughnutData] = useState(null);
+
+
+  const handleClose = () => { setAddCategory(false); setFormCategoryBudget(null); setFormCategoryName(null); setFormCategoryType(null) };
+  const handleShow = () => setAddCategory(true);
+  const deleteClose = () => { setDeleteId(null) };
+
+  const submitForm = async () => {
+    const formData = {
+      name: formCategoryName,
+      type: formCategoryType,
+      budget: formCategoryBudget
+    }
+    setPageLoaded(false);
+    const response = await createCategory(formData);
+    handleClose();
+  }
+
+  const deleteCat = async () => {
+    const response = await deleteCategory(deleteId.id);
+    setDeleteId(null);
+    setPageLoaded(false);
+  }
 
   useEffect(() => {
     const getData = async () => {
       const user = await getUserData();
+      let res = DataSimplifier(user.Id, user.accounts, user.categories, user.transactions);
+      let response = GroupByCategory(user.categories, res);
+      let years = res.map(item => new Date(item.transactionDate).getFullYear());
+      years = [... new Set(years)];
       setUser(user);
-      console.log(user);
+      setCategoryList(Object.keys(response))
+      setSimplifiedData(res);
+      setGroupByCategory(response);
+      setDoughnutData(createDoughnutData(response));
+      setTransactionDisplay(res);
+      setYearList(years)
+      setPageLoaded(true);
     };
     getData();
-    // eslint-disable-next-line
-  }, []);
+  }, [pageLoaded]);
 
-  let years = [];
-  let categories_data = {};
-  let budget = {};
-
-  if (user) {
-    console.log(user.UserName);
-    for (let i = 0; i < user.categories.length; i++) {
-      let getTimeStamp = user.categories[i].CreatedAt;
-      let date = new Date(getTimeStamp);
-      let month = date.getMonth();
-      let year = date.getFullYear();
-
-      if (!years.includes(year)) {
-        years.push(year);
-      }
-
-      for (let j = 0; j < user.transactions.length; j++) {
-        if (user.transactions[j].CategoryId === user.categories[i].Id) {
-          if (categories_data.hasOwnProperty(user.categories[i].Name)) {
-            categories_data[user.categories[i].Name] +=
-              user.transactions[j].Amount;
-          } else {
-            categories_data[user.categories[i].Name] =
-              user.transactions[j].Amount;
-          }
-        }
-      }
-    }
-    console.log(categories_data);
-    for (let i = 0; i < user.categories.length; i++) {
-      //   if (budget.hasOwnProperty(user.categories[i].Name)) {
-      //     budget[user.categories[i].Name] += user.categories[i].Budget;
-      //   } else {
-      budget[user.categories[i].Name] = user.categories[i].Budget;
-      //   }
-    }
+  function loadTransactionTableData(category, year, month) {
+    var res = (simplifiedData ?? []).filter(item => checkFilter(category, year, month, item));
+    setTransactionDisplay(res);
+    setDoughnutData(createDoughnutData(GroupByCategory(user.categories, res)));
   }
-  console.log(budget);
 
-  const categorynames = Object.keys(categories_data);
-  const categoryvalues = Object.values(categories_data);
-  const budgetvalues = Object.values(budget);
+  function checkFilter(categoryFilter, yearFilter, monthFilter, item){
+    var year = new Date(item.transactionDate).getUTCFullYear();
+    var month = new Date(item.transactionDate).getUTCMonth();
+    return (categoryFilter == null ? true : item.categoryName == categoryFilter) && (yearFilter == null ? true : year == yearFilter) && (monthFilter == null ? true : month == monthFilter)  
+  }
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   function setYearValue(y) {
     setToggleYear(y);
+    loadTransactionTableData(toggleCategory, y, toggleMonth);
   }
 
   function setMonthValue(m) {
-    setToggleMonth(m);
+    setToggleMonth(months.indexOf(m));
+    loadTransactionTableData(toggleCategory, toggleYear, months.indexOf(m));
   }
-  //   console.log(typeof toggleMonth);
 
-  const doughnutData = {
-    labels: categorynames,
-    datasets: [
-      {
-        data: categoryvalues,
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.2)",
-          "rgba(54, 162, 235, 0.2)",
-          "rgba(255, 206, 86, 0.2)",
-          "rgba(75, 192, 192, 0.2)",
-        ],
-        borderColor: [
-          "rgba(255, 99, 132, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-          "rgba(75, 192, 192, 1)",
-        ],
-        borderWidth: 1,
-        cutout: "90%",
-        circumference: 180,
-        rotation: 270,
-      },
-    ],
-  };
+  function setCategoryName(c) {
+    setToggleCategory(c);
+    loadTransactionTableData(c, toggleYear, toggleMonth);
+  }
+
+  function createDoughnutData(data) {
+    return {
+      labels: Object.keys(data),
+      datasets: [
+        {
+          data: Object.keys(data).map(entry => data[entry].reduce((sum, item) => sum + item.transactionAmount, 0)),
+          backgroundColor: [
+            "rgba(255, 99, 132, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
+            "rgba(255, 206, 86, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
+          ],
+          borderColor: [
+            "rgba(255, 99, 132, 1)",
+            "rgba(54, 162, 235, 1)",
+            "rgba(255, 206, 86, 1)",
+            "rgba(75, 192, 192, 1)",
+          ],
+          borderWidth: 1,
+          cutout: "90%",
+          circumference: 180,
+          rotation: 270,
+        },
+      ],
+    };
+  }
+
+
+  if (pageLoaded == false) {
+    return <Spinner animation="border" role="status" style={{
+      marginTop: "10%",
+      marginLeft: "5%",
+    }}>
+      <span className="visually-hidden">Loading...</span>
+    </Spinner>;
+  }
 
   return (
     <>
@@ -124,132 +142,157 @@ const Categories = () => {
           marginLeft: "5%",
         }}
       >
+        <Dropdown onSelect={setCategoryName} >
+          <Dropdown.Toggle className="dropdown" id="dropdown-basic">
+            {toggleCategory ?? 'Choose Category'}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {categoryList.map(category => (
+              <Dropdown.Item eventKey={category}>{category}</Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+        <Dropdown onSelect={setYearValue}>
+          <Dropdown.Toggle className="dropdown" id="dropdown-basic">
+            {toggleYear ?? "Choose Year"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {yearList.map((year) => (
+              <Dropdown.Item eventKey={year}>{year}</Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+        <Dropdown onSelect={setMonthValue}>
+          <Dropdown.Toggle className="dropdown">
+            {toggleMonth == null ? "Choose Month" : months[toggleMonth]}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {months.map((month) => (
+              <Dropdown.Item eventKey={month}>
+                {month}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
         <Col>
-          <h1>Welcome {user ? user.UserName : "Guest"}!</h1>{" "}
-        </Col>
-        <Col></Col>
-        <Col>
-          <Row>
-            <Dropdown onSelect={setYearValue}>
-              <Dropdown.Toggle className="dropdown" id="dropdown-basic">
-                Choose Year
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                {years.map((year) => (
-                  <Dropdown.Item eventKey={year}>{year}</Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-            <h3 style={{ marginLeft: "5%" }}> {toggleYear} </h3>
-            <Dropdown style={{ marginLeft: "5%" }} onSelect={setMonthValue}>
-              <Dropdown.Toggle className="dropdown">
-                Choose Month
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                {months.map((month) => (
-                  <Dropdown.Item eventKey={months.indexOf(month)}>
-                    {month}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-            <h3 style={{ marginLeft: "5%" }}> {Number(toggleMonth) + 1} </h3>
-          </Row>
+          <Button onClick={handleShow}>
+            Add Category
+          </Button>
+
+          <Modal show={addCategory} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Create A New Category</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>Category Name</Form.Label>
+                  <Form.Control type="text" placeholder="Enter category name" id="categoryName" onChange={e => setFormCategoryName(e.target.value)} />
+                  <Form.Select id="categoryType" onChange={e => {
+                    setFormCategoryType(e.target.value);
+                    if (e.target.value != 2) { setFormCategoryBudget(null) }
+                  }}>
+                    <option>Category Type</option>
+                    <option value="1">Income</option>
+                    <option value="2">Expense</option>
+                  </Form.Select>
+                  {formCategoryType == 2 && <Form.Control type="text" placeholder="Enter budget for Category" id="categoryName" onChange={e => setFormCategoryBudget(e.target.value)} />}
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={submitForm}>
+                Save Changes
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </Col>
       </Row>
-
-      {/* 2nd row  */}
-      <Row>
-        <Col>
-          <Row>
-            <Col className="toprow">
-              <Card>
-                <Card.Body>
-                  <Card.Title className="mb-2" style={{ fontSize: "60%" }}>
-                    Expenses by Category for {Number(toggleMonth) + 1}/
-                    {toggleYear}
-                  </Card.Title>
-                  <Doughnut
-                    data={doughnutData}
-                    options={{ aspectRatio: 2 }}
-                    style={{ height: "10%" }}
-                  />
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col className="bottomrow">
-              <Card>
-                <Card.Body>
-                  <Card.Title style={{ fontSize: "400%" }}>
-                    Budget for {Number(toggleMonth) + 1}/{toggleYear}{" "}
-                  </Card.Title>
-                  <Table
-                    responsive
-                    striped
-                    style={{ fontSize: "220%", marginTop: "1%" }}
-                  >
-                    <thead style={{ alignItems: "center" }}>
-                      <tr>
-                        {categorynames.map((category) => (
-                          <th>{category}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        {budgetvalues.map((value) => (
-                          <td>{value}</td>
-                        ))}
-                      </tr>
-                    </tbody>
-                  </Table>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+      <Row style={{ marginTop: "1%", marginLeft: "5%", marginRight: "5%" }}>
+        <Col sm={6}>
+          <Card>
+            <Card.Body>
+              <Doughnut
+                data={doughnutData}
+                options={{ aspectRatio: 2 }}
+                style={{ height: "10%" }}
+              />
+            </Card.Body>
+          </Card>
         </Col>
-
-        <Col style={{ marginRight: "2%" }}>
-          <Row>
-            <Col className="bottomrow">
-              <Card>
-                <Card.Body>
-                  <Card.Title style={{ fontSize: "400%" }}>
-                    Add Categories
-                  </Card.Title>
-                  <Form>
-                    <Form.Group className="mb-3" controlId="formCategoryName">
-                      <Form.Label style={{ fontSize: "300%" }}>
-                        Category Name
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter Category Name"
-                        style={{ width: "75%", boxShadow: "none" }}
-                      />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="formBudget">
-                      <Form.Label style={{ fontSize: "300%" }}>
-                        Budget
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter Budget"
-                        style={{ width: "75%", boxShadow: "none" }}
-                      />
-                    </Form.Group>
-                    <Button type="submit">Submit</Button>
-                  </Form>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+        <Col sm={6}>
+          <Table responsive striped bordered>
+            <thead>
+              <tr>
+                <th>Category Name</th>
+                <th>Category Type</th>
+                <th>Category Budget</th>
+                <th>Created At</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {user.categories.map(item => (
+                <tr>
+                  <td>{item.Name}</td>
+                  <td style={{ color: item.Type === 1 ? "rgba(50,205,50)" : "red" }}>{item.Type == 1 ? "Income" : "Expense"}</td>
+                  <td>$ {item.Budget ?? 0}</td>
+                  <td>{item.CreatedAt.split("T")[0]}</td>
+                  <td><Button variant="danger" value={item.Name} id={item.Id} onClick={e => setDeleteId({ name: e.target.value, id: e.target.id })}>Delete</Button></td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          {deleteId && <Modal show={deleteId} onHide={deleteClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirm Delete</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Are you sure you want to delete the category : {deleteId.name} ?
+              All transactions related to the category will be deleted as well.
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={deleteClose}>
+                Cancel
+              </Button>
+              <Button variant="danger" onClick={deleteCat}>
+                Confirm
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          }
         </Col>
       </Row>
+      {transactionDisplay && <Row style={{
+        marginTop: "1%",
+        marginLeft: "5%",
+        width: "90%"
+      }}>
+        <Table responsive striped bordered>
+          <thead>
+            <tr>
+              <th>Category Name</th>
+              <th>Transaction Entry</th>
+              <th>Amount</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {transactionDisplay.map(item => (
+              <tr>
+                <td>{item.categoryName}</td>
+                <td>{item.transactionName}</td>
+                <td style={{ color: item.categoryType === 1 ? "rgba(50,205,50)" : "red" }}>$ {item.transactionAmount}</td>
+                <td>{item.transactionDate.split("T")[0]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Row>
+      }
     </>
   );
 };

@@ -3,7 +3,7 @@ name: Deploy to Heroku (Frontend)
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "Web/moneytreeweb/**"
       - ".github/workflows/frontend.yml"

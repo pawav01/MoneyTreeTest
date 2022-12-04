@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "backend/**"
+      - "API/moneytreeapi/**"
       - ".github/workflows/backend.yml"
 
 jobs:

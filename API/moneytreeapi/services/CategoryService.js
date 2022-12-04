@@ -1,5 +1,5 @@
 import Category from '../models/data/Category.js';
-
+import Transaction from '../models/data/Transaction.js';
 const CategoryService = {
 
     getAllByUserId:  async (userId) => {

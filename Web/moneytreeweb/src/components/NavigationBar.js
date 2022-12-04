@@ -23,6 +23,7 @@ const NavigationBar = () => {
               <Link to="/account">Accounts</Link>
               <Link to="/categories">Categories</Link>
               <Link to="/login">Login</Link>
+              <Link to="/transaction">Transactions</Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>

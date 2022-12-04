@@ -31,10 +31,13 @@ export const GroupByAccount = (accounts, simplifiedData) => {
     }, Object.create(null))
 }
 
-export const GroupByCategory = (simplifiedData) => {
-    return simplifiedData.reduce((result, item) => {
-        result[item.categoryId] = result[item.categoryId] || [];
-        result[item.categoryId].push(item);
+export const GroupByCategory = (categories, simplifiedData) => {
+    return categories.reduce((result, item) => {
+        result[item.Name] = result[item.Name] || [];
+        simplifiedData.map(entry => {
+            if(entry.categoryName === item.Name)
+                result[item.Name].push(entry);
+        })
         return result;
     }, Object.create(null))
 }
@@ -50,12 +53,12 @@ export const AccountSummaryTable = (accounts, accountData) => {
         (element != undefined ? accountData[element] : []).map(item => {
                 var dateDiff = (currentDate - new Date(item.transactionDate))/msDay;
                 switch(item.categoryType){
-                    case 1:
+                    case 2:
                         expense30 = dateDiff <= 30 ? expense30+=item.transactionAmount : expense30;
                         expense60 = dateDiff <= 60 ? expense60+=item.transactionAmount : expense60;
                         expense90 = dateDiff <= 90 ? expense90+=item.transactionAmount : expense90;
                         break;
-                    case 2: 
+                    case 1: 
                         income30 = dateDiff <= 30 ? income30+=item.transactionAmount : income30;
                         income60 = dateDiff <= 60 ? income60+=item.transactionAmount : income60;
                         income90 = dateDiff <= 90 ? income90+=item.transactionAmount : income90;
@@ -75,4 +78,8 @@ export const AccountSummaryTable = (accounts, accountData) => {
 
     }); 
     return result;
+}
+
+export const CategorySummaryTable = (categories, categoryData) => {
+
 }

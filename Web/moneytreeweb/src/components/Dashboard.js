@@ -22,8 +22,6 @@ const Dashboard = () => {
     // eslint-disable-next-line
   }, []);
 
-  // console.log(user);
-
   let expenseData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   let incomeData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   let years = [];
@@ -38,7 +36,6 @@ const Dashboard = () => {
       if (!years.includes(year)) {
         years.push(year);
       }
-      // console.log(years);
 
       if (user.categories[i].Type === 2) {
         expenseData[month] = user.categories[i].Budget;
@@ -67,25 +64,20 @@ const Dashboard = () => {
   // const monthnumbers = months.map((month) => {
   //   return months.indexOf(month);
   // });
-  // console.log(monthnumbers);
 
   function setYearValue(y) {
     setToggleYear(y);
   }
-  // console.log(toggleYear);
 
   function setMonthValue(m) {
     setToggleMonth(m);
   }
-
-  //console.log(toggleMonth);
 
   function getIncome() {
     for (let i = 0; i < user.categories.length; i++) {
       let getTimeStamp = user.categories[i].CreatedAt;
       let date = new Date(getTimeStamp);
       let month = date.getMonth();
-      // console.log(month);
       let year = date.getFullYear();
       if (
         user.categories[i].Type === 1 &&

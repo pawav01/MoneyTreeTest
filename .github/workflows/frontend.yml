@@ -8,6 +8,7 @@ on:
       - "Web/moneytreeweb/**"
       - ".github/workflows/frontend.yml"
 
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
